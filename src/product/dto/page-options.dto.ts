@@ -15,4 +15,7 @@ export class PageOptionsDto {
 
   @ApiProperty({ required: false })
   readonly order?: string;
+
+  @ApiProperty({ required: false })
+  readonly showDiscounts?: string;
 }

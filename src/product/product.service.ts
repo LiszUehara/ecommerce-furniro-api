@@ -4,7 +4,7 @@ import { CreateProductDTO } from "./dto/create-product.dto";
 
 @Injectable()
 export class ProductService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create({
     name,
@@ -42,11 +42,12 @@ export class ProductService {
     params?: {
       isNew?: boolean;
       categoryIds?: number[];
+      showDiscounts?: boolean;
     },
     order?: string,
   ) {
-    const where = {};
-    let orderBy = {}; 
+    const where: any = {};
+    let orderBy = {};
 
     if (order === 'desc') {
       orderBy = { id: 'desc' };
@@ -58,6 +59,18 @@ export class ProductService {
       if (params.isNew !== undefined) {
         where["is_new"] = params.isNew;
       }
+      if (params.showDiscounts != undefined) {
+        where.OR = [];
+
+        if (params.isNew) {
+          where.OR.push({ is_new: params.isNew });
+        }
+
+        if (params.showDiscounts) {
+          where.OR.push({ discount_price: { not: null } });
+        }
+      }
+
       if (params.categoryIds && params.categoryIds.length > 0) {
         where["category_id"] = {
           in: params.categoryIds,
@@ -69,6 +82,7 @@ export class ProductService {
       const allProducts = await this.prisma.products.findMany({
         where: {
           ...where,
+          OR: where.OR
         },
         orderBy
       });

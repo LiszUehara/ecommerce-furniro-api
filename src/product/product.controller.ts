@@ -22,7 +22,7 @@ export class ProductController {
 
   @Get()
   async list(@Query() pageOptionsDto: PageOptionsDto) {
-    const { page, limit, isNew, categoryIds, order } = pageOptionsDto;
+    const { page, limit, isNew, categoryIds, order, showDiscounts } = pageOptionsDto;
     const parsedPage: number | undefined =
       typeof page === "string" ? parseInt(page, 10) : page;
     const parsedLimit: number | undefined =
@@ -38,6 +38,7 @@ export class ProductController {
       {
         isNew: isNew == "true" ? true : isNew == "false" ? false : undefined,
         categoryIds: parsedCategoryIds,
+        showDiscounts: showDiscounts == "true" ? true : showDiscounts == "false" ? false : undefined,
       },
       order,
     );
